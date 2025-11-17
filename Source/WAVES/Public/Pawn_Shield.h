@@ -5,7 +5,7 @@
 #include "GameFramework/Pawn.h"
 #include "Pawn_Shield.generated.h"
 
-class UCapsuleComponent;
+class UBoxComponent;
 class UStaticMeshComponent;
 class UShieldComponent;
 
@@ -19,7 +19,7 @@ public:
 
 	/** Collision root */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Shield")
-	TObjectPtr<UCapsuleComponent> Collision;
+	TObjectPtr<UBoxComponent> Collision;
 
 	/** Visual mesh (no collision) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Shield")

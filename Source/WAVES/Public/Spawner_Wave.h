@@ -6,6 +6,7 @@
 
 class AActor_Wave;
 class UDA_DifficultyProfile;
+class AConductor_Waves;
 
 UCLASS()
 class WAVES_API ASpawner_Wave : public AActor
@@ -29,6 +30,15 @@ public:
 	/** Random stream for reproducible patterns if needed. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Waves")
 	int32 RandomSeed = 1337;
+
+	// Whether this spawner should try to sync with the Conductor
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Waves|Spawner")
+	bool bUseMusicConductor = true;
+
+	UFUNCTION()
+	void HandleBeat(int32 BeatIndex);
+
+
 
 protected:
 	virtual void BeginPlay() override;

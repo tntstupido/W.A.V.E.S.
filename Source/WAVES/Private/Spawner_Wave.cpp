@@ -3,6 +3,9 @@
 #include "GS_Waves.h"
 #include "DA_DifficultyProfile.h"
 #include "Engine/World.h"
+#include "Conductor_Waves.h"
+#include "Kismet/GameplayStatics.h"
+
 
 ASpawner_Wave::ASpawner_Wave()
 {
@@ -12,9 +15,46 @@ ASpawner_Wave::ASpawner_Wave()
 void ASpawner_Wave::BeginPlay()
 {
 	Super::BeginPlay();
+
 	RNG.Initialize(RandomSeed);
+	
+	if (bUseMusicConductor)
+	{
+		// Try to find Conductor_Waves in the level
+		AConductor_Waves* Conductor = Cast<AConductor_Waves>(
+			UGameplayStatics::GetActorOfClass(this, AConductor_Waves::StaticClass())
+		);
+
+		if (Conductor)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Spawner %s bound to Conductor %s"),
+				*GetName(), *Conductor->GetName());
+
+			Conductor->OnBeat.AddDynamic(this, &ASpawner_Wave::HandleBeat);
+			return; // do NOT start our own timer if conductor exists
+		}
+	}
+
+	// Fallback: use old timer-based spawning
+	UE_LOG(LogTemp, Log, TEXT("Spawner %s using internal timer (no Conductor or disabled)."),
+		*GetName());
+
 	StartSpawning();
 }
+
+void ASpawner_Wave::HandleBeat(int32 BeatIndex)
+{
+	// EXAMPLE PATTERN LOGIC:
+	// For now, spawn on EVERY beat.
+
+	// You can easily adjust patterns:
+	// - every 2nd beat: if (BeatIndex % 2 == 0)
+	// - burst at start of bar: use OnBar instead, etc.
+
+	SpawnOnce();
+}
+
+
 
 void ASpawner_Wave::StartSpawning()
 {
